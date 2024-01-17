@@ -565,17 +565,34 @@
  
  
  
- 
- 
-
- 
+  
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.feedback.FacultyInfo" %>
+<%@ page import="com.project.FacultyInfo" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="java.util.ArrayList" %>
-<%List<FacultyInfo> facultyInfoList = (List<FacultyInfo>) pageContext.getAttribute("facultyInfoList"); %>
+<%
+
+//List<FacultyInfo> facultyInfoList = (List<FacultyInfo>) pageContext.getAttribute("facultyInfoList"); 
+javax.servlet.http.Cookie[] cookies = request.getCookies();
+int facultyId = 0;
+String subject = "";
+String facultyName = "";
+
+if (cookies != null) {
+    for (javax.servlet.http.Cookie cookie : cookies) {
+        if (cookie.getName().equals("facultyIdCookie")) {
+            facultyId = Integer.parseInt(cookie.getValue());
+        } else if (cookie.getName().equals("subjectCookie")) {
+            subject = cookie.getValue();
+        } else if (cookie.getName().equals("facultyNameCookie")) {
+            facultyName = cookie.getValue();
+        }
+    }
+}
+
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -657,30 +674,43 @@
     
     </style>
 
-    <script>
-function updateFacultyInfo() {
-    var facultyList = <%= facultyInfoList%>
-    var currentIndex = parseInt(document.getElementById("currentIndex").value);
-    var selectedFaculty = facultyList[currentIndex];
+ <script>
+ 
+//function updateFacultyInfo() {
+ 
+  //  var currentIndex = parseInt(document.getElementById("currentIndex").value);
+   // var selectedFaculty = facultyList[currentIndex];
 
     // Update faculty details
-    document.getElementById("fname").innerText = selectedFaculty.getFname();
+   // document.getElementById("fname").innerText = selectedFaculty.getFname();
     
-    document.getElementById("fid1").value = selectedFaculty.getFid();
-    document.getElementById("sub").innerText = selectedFaculty.getSub();
-    document.getElementById("sec").innerText = selectedFaculty.sec;
+   // document.getElementById("fid1").value = selectedFaculty.getFid();
+   // document.getElementById("sub").innerText = selectedFaculty.getSub();
+   // document.getElementById("sec").innerText = selectedFaculty.sec;
 
     // Example: Update more elements dynamically
     // document.getElementById("anotherElement").innerText = selectedFaculty.getAnotherValue();
 
     // ... Update other elements as needed ...
-}
+
+    
+     var facultyId = <%= facultyId %>;
+        var subject = '<%= subject %>';
+        var facultyName = '<%= facultyName %>';
+
+        function updateFacultyInfo() {
+            document.getElementById("fid1").value = facultyId;
+            document.getElementById("sub").innerText = subject;
+            //document.getElementById("fname").innerText = facultyName;
+            // Add more logic for other form elements
+        }
+    
 </script>
     
 </head>
 
 <body>
-<span id="fname">this is fname</span>
+
 <div>
     <div class="page-container1">
         <img src="logo.png">
@@ -697,8 +727,8 @@ function updateFacultyInfo() {
 
         <h4>Academic Year: <%= request.getAttribute("acc_year") %> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Cycle: <%= request.getAttribute("cycle") %></h4>
         
-       <h4>Faculty Name: <span id="fname"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Faculty Id: <span id="fid1"></span></h4>
-<h5>Subject: <span id="sub"></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>Section: <span id="sec"></span></h5>
+       <h4>Faculty Name: <%= facultyName %></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Faculty Id: <%= facultyId%></span></h4>
+<h5>Subject: <%= subject %></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>Section: <%= request.getAttribute("sec") %></span></h5>
 
 
         <div class="divider"></div>

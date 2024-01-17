@@ -3,7 +3,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.sql.Timestamp"%>
-<%@ page import="java.util.Date"%>;
+<%@ page import="java.util.Date"%>
 <%@page import="com.feedback.*" %>
 
 <!DOCTYPE html>
@@ -178,11 +178,6 @@
              // Store faculty information in a list
              facultyInfoList.add(new FacultyInfo(fid, sub, fname));
          }
-         
-         
-        
-
-
             String studentTableName = registerNo;
             String createStudentTableSQL = "CREATE TABLE IF NOT EXISTS " + studentTableName + " (" +
                     "`fid` INT ," +
@@ -198,6 +193,18 @@
             
             int facultyInfoListSize = facultyInfoList.size(); // Number of faculty members
             int formsSubmitted = 0; // Counter for submitted forms
+        }catch (Exception e) {
+            e.printStackTrace(); // Handle the exception appropriately, log or display an error message
+        } finally {
+            // Close resources in the finally block to ensure they are always released
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(); // Handle the exception appropriately, log or display an error message
+            }
+        }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -209,23 +216,24 @@
         /* Your CSS styles here */
     </style>
     <script>
-        var currentForm = 0;
-        var totalForms = <%= facultyInfoListSize %>;
+    var currentForm = 0;
+    var totalForms = 0;
 
-        function showForm(formIndex) {
-            var currentFormId = "form" + currentForm;
-            document.getElementById(currentFormId).style.display = "none";
+    function showForm(formIndex, totalForms) {
+        var currentFormId = "form" + currentForm;
+        document.getElementById(currentFormId).style.display = "none";
 
-            var nextFormId = "form" + formIndex;
-            document.getElementById(nextFormId).style.display = "block";
+        var nextFormId = "form" + formIndex;
+        document.getElementById(nextFormId).style.display = "block";
 
-            currentForm = formIndex;
+        currentForm = formIndex;
 
-            if (formIndex === totalForms) {
-                document.forms[nextFormId].submit();
-            }
+        if (formIndex === totalForms) {
+            document.getElementById(nextFormId).submit();
         }
-    </script>
+    }
+</script>
+
 </head>
 <body>
     <div class="page-container">
@@ -234,9 +242,9 @@
         </div>
         <div class="divider"></div>
         <hr>
-        <form>
             <%
-            for (int i = 0; i < facultyInfoListSize; i++) {
+            int i=0;
+            for (i = 0; i < facultyInfoListSize; i++) {
                 FacultyInfo facultyInfo = facultyInfoList.get(i);
                 String formId = "form" + i;
             %>
@@ -248,12 +256,12 @@
                 <input type="hidden" name="fid" value="<%= facultyInfo.getFid() %>">
                 
     <!-- Include facultyInfo in the form for reference -->
-    <input type="hidden" name="fid" value="<%= facultyInfo.getFid() %>">
-    <input type="hidden" name="accYear" value="<%= accYear %>">
-    <input type="hidden" name="cycle" value="<%= cycle %>">
-    <input type="hidden" name="fname" value="<%= fname %>">
-    <input type="hidden" name="sub" value="<%= sub %>">
-    <input type="hidden" name="sec" value="<%= sec %>">
+    <input type="hidden" name="fid" value="<%= facultyInfo.getFid() %>"/>
+    <input type="hidden" name="accYear" value="<%= accYear %>"/>
+    <input type="hidden" name="cycle" value="<%= cycle %>"/>
+    <input type="hidden" name="fname" value="<%= fname %>"/>
+    <input type="hidden" name="sub" value="<%= sub %>"/>
+    <input type="hidden" name="sec" value="<%= section %>"/>
                
 
                
@@ -395,12 +403,10 @@
           <label><input type="radio" name="q15" value="e"> Always</label>
         </div></div><br>
 
+<button type="button" onclick="showForm(<%= i + 1 %>, <%= facultyInfoListSize %>)">Next</button>
 
-   
-    <!-- Your question content here -->
-    <button type="button" onclick="showForm(<%= i + 1 %>)">Next</button>
 </form>
-<%} %>
+
             
 
             <!-- Show the first form initially -->

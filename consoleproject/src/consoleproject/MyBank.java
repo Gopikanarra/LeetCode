@@ -16,7 +16,7 @@ public class MyBank {
 	    Fixed.initializeAccounts();
 	    Savings.initializeAccounts();
 	    
-		System.out.println("HELLO WELCOME TO \"OURBANK\"");
+		System.out.println("********************HELLO WELCOME TO \"OURBANK\"*********************************");
 		
 		int loop=1;
 		while(loop==1) {

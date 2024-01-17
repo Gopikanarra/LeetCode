@@ -1,4 +1,4 @@
-package com.feedback;
+package com.project;
 
 import java.io.Serializable;
 
